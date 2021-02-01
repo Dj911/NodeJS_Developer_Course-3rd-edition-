@@ -1,0 +1,111 @@
+Hello World!! First node file inpt program!
+Navi godi navo daav!!
+Navi godi navo daav!!
+Navi godi navo daav!!
+
+
+//const { require } = require("yargs")
+const fs = require('fs');
+
+const getNotes = ()=>{
+    return "Your Notes....";
+}
+
+const addNote = (tle,bdy)=>{
+    try {
+        const notes = loadNotes()
+    console.log(JSON.stringify(notes));
+    console.log(typeof(notes));
+    notes.push({
+        title: tle,
+        body: bdy
+    }) 
+    saveNotes(notes);
+    } catch (e) {
+        console.log(e);
+    }
+    
+}
+
+const saveNotes = (notes)=>{
+    const dataJSON = JSON.stringify(notes);
+    fs.writeFileSync("notes.json",dataJSON);
+}
+
+const loadNotes = ()=>{    
+    const dataBuffer = fs.readFileSync("notes.json");
+    const dataJSON = dataBuffer.toString();
+    return JSON.parse(dataJSON);
+}
+
+module.exports = {
+    getNotes: getNotes,
+    addNote: addNote
+}
+
+//////////////////////////////////
+
+const chalk = require('chalk');
+//const { string } = require('yargs');
+const yargs = require('yargs');
+const notes = require('./Notes');
+
+const green = chalk.green.inverse.bold;
+const error = chalk.bgRed;
+
+// Customize you own personal version for this file through command line
+yargs.version('0.1 Beta'); //Default 1.0.0
+
+// Create yargs Add command
+yargs.command({
+    command: 'add',
+    describe: 'Adds a new note',
+    builder: {
+        title: {
+            describe: 'Note title',
+            demandOption: true,
+            type: 'string'
+        },
+        body: {
+            describe: 'Note Body',
+            demandOption: true,
+            type: 'string'
+        }
+    },
+    handler: (argv)=>{
+        notes.addNote(argv.title,argv.body);
+        //console.log(notes.getNotes());
+    }
+})
+
+//Create yargs Remove cmd
+yargs.command({
+    command: 'remove',
+    describe: 'Removes a note',
+    handler: ()=>{
+        console.log('Removing a note...');
+    }
+})
+
+//Create yargs List cmd
+yargs.command({
+    command: 'list',
+    describe: 'Lists all the notes',
+    handler: ()=>{
+        console.log('Lists all the notes here!');
+    }
+})
+
+//Create yargs Read cmd
+yargs.command({
+    command: 'read',
+    handler: ()=>{
+        console.log('Reads the note!');
+    },
+    describe: 'Reads from the note'    
+})
+
+yargs.parse();//Required to execute the handler function inside the yargs command
+
+//console.log(yargs.argv);
+
